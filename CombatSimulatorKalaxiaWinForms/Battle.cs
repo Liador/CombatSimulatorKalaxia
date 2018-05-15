@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Simulator
@@ -131,47 +132,13 @@ namespace Simulator
 
         public void Play()
         {
-            int i, j, k;
-            Ship shipTemp;
             if (Simulation.fightOnBattleField)
             {
                 while (!attackers.Victory && !defenders.Victory)
                 {
                     Thread.Sleep(1);
-                    for (i = 0; i < Field.Size; i++)
-                    {
-                        for (j = 0; j < Field.Size; j++)
-                        {
-                            foreach (Ship s in Field.Grid[i, j])
-                            {
-                                if (s.Alive)
-                                {
-                                    s.Attack(Field, i, j);
-                                }
-                            }
-                        }
-                    }
-                    for (i = 0; i < Field.Size; i++)
-                    {
-                        for (j = 0; j < Field.Size; j++)
-                        {
-                            k = 0;
-                            while (k < Field.Grid[i, j].Count)
-                            {
-                                shipTemp = Field.Grid[i, j][k];
-                                if (Field.Grid[i, j][k].Alive && shipTemp.MovementLeft > 0)
-                                {
-                                    Field.Grid[i, j].Remove(shipTemp);
-
-                                    Field.Grid[shipTemp.Move(Field, i, j)[0], shipTemp.Move(Field, i, j)[1]].Add(shipTemp);
-                                }
-                                else
-                                {
-                                    k++;
-                                }
-                            }
-                        }
-                    }
+                    AllShipsAttack();
+                    AllShipsMove();
                     Attackers.CountShipsAlive();
                     Defenders.CountShipsAlive();
                     NumberOfTurns++;
@@ -204,6 +171,52 @@ namespace Simulator
 
                     }
                     battleFieldHistory.Add(new BattleField(Field));
+                }
+            }
+        }
+
+        private void AllShipsMove()
+        {
+            int i, j, k;
+            Ship shipTemp;
+            for (i = 0; i < Field.Size; i++)
+            {
+                for (j = 0; j < Field.Size; j++)
+                {
+                    k = 0;
+                    while (k < Field.Grid[i, j].Count)
+                    {
+                        shipTemp = Field.Grid[i, j][k];
+                        if (Field.Grid[i, j][k].Alive && shipTemp.MovementLeft > 0)
+                        {
+                            Field.Grid[i, j].Remove(shipTemp);
+
+                            Field.Grid[shipTemp.Move(Field, i, j)[0], shipTemp.Move(Field, i, j)[1]].Add(shipTemp);
+                        }
+                        else
+                        {
+                            k++;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void AllShipsAttack()
+        {
+            int i;
+            int j;
+            for (i = 0; i < Field.Size; i++)
+            {
+                for (j = 0; j < Field.Size; j++)
+                {
+                    foreach (Ship s in Field.Grid[i, j])
+                    {
+                        if (s.Alive)
+                        {
+                            s.Attack(Field, i, j);
+                        }
+                    }
                 }
             }
         }
