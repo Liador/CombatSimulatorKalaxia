@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+
 
 namespace Simulator
 {
@@ -95,14 +97,15 @@ namespace Simulator
             int i, j, k, temp;
             int squareSize = bitmapSize/Size;
             int shipSize;
+            int numberOfRows;
             using (Graphics g = Graphics.FromImage(bm))
             using (SolidBrush blackBrush = new SolidBrush(Color.Black))
             using (SolidBrush whiteBrush = new SolidBrush(Color.White))
             using (Pen blackPen = new Pen(Color.Black))
-            using (Pen redPen = new Pen(Color.Blue))
-            using (Pen greenPen = new Pen(Color.Green))
-            using (Pen darkRedPen = new Pen(Color.DarkBlue))
-            using (Pen darkGreenPen = new Pen(Color.DarkGreen))
+            using (Pen deadBluePen = new Pen(Color.Purple))
+            using (Pen deadGreenPen = new Pen(Color.Brown))
+            using (Pen aliveBluePen = new Pen(Color.DarkBlue))
+            using (Pen aliveGreenPen = new Pen(Color.DarkGreen))
             {
                 p1 = new Point(0, bitmapSize - 1);
                 p2 = new Point(bitmapSize - 1, bitmapSize - 1);
@@ -129,38 +132,42 @@ namespace Simulator
                     for (j = 0; j < Size; j++)
                     {
                         temp = Grid[i, j].Count;
-                        for (k = 0; k < temp; k++)
+                        if(temp>0)
                         {
-
-                            if (Grid[i, j][k].ArmyName == Attackers.Name)
+                            numberOfRows = temp /(int)Math.Floor(Math.Sqrt(temp));
+                            for (k = 0; k < temp; k++)
                             {
                                 shipSize = Grid[i, j][k].Type.Number + 2;
-                                //p1 = new Point(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1) + 2));
-                                //p2 = new Point(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)));
-                                if(Grid[i, j][k].Alive)
+                                if (Grid[i, j][k].ArmyName == Attackers.Name)
                                 {
-                                    g.DrawRectangle(darkGreenPen, new Rectangle(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)), shipSize, shipSize));
+                                    //p1 = new Point(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1) + 2));
+                                    //p2 = new Point(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)));
+                                    if (Grid[i, j][k].Alive)
+                                    {
+                                        g.DrawRectangle(aliveGreenPen, new Rectangle(i * squareSize + ((k + 1) % (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), j * squareSize + (k / (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), shipSize, shipSize));
+                                    }
+                                    else
+                                    {
+                                        g.DrawRectangle(deadGreenPen, new Rectangle(i * squareSize + ((k + 1) % (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), j * squareSize + (k / (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), shipSize, shipSize));
+                                    }
+
                                 }
                                 else
                                 {
-                                    g.DrawRectangle(greenPen, new Rectangle(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)), shipSize, shipSize));
-                                }
-                                
-                            }
-                            else
-                            {
-                                //p1 = new Point(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)) + 2);
-                                //p2 = new Point(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)));
-                                if (Grid[i, j][k].Alive)
-                                {
-                                    g.DrawRectangle(darkRedPen, new Rectangle(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)), shipSize , shipSize));
-                                }
-                                else
-                                {
-                                    g.DrawRectangle(redPen, new Rectangle(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)), shipSize, shipSize));
+                                    //p1 = new Point(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)) + 2);
+                                    //p2 = new Point(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)));
+                                    if (Grid[i, j][k].Alive)
+                                    {
+                                        g.DrawRectangle(aliveBluePen, new Rectangle(i * squareSize + ((k + 1) % (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), j * squareSize + (k / (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), shipSize, shipSize));
+                                    }
+                                    else
+                                    {
+                                        g.DrawRectangle(deadBluePen, new Rectangle(i * squareSize + ((k + 1) % (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), j * squareSize + (k / (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), shipSize, shipSize));
+                                    }
                                 }
                             }
                         }
+                        
                     }
                 }
                 return bm;

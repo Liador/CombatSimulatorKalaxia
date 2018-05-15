@@ -16,7 +16,7 @@ namespace CombatSimulatorKalaxiaWinForms
     public partial class SimulatorWindow : Form
     {
         private int numberOfBattles = 1;
-        public int numberOfShips= 15;
+        public int numberOfShips= 21;
         public int gridSize=5;
         public int bitmapSize = 500;
         Simulation sim;
