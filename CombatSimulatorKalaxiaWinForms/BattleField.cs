@@ -94,13 +94,14 @@ namespace Simulator
             Point p1, p2;
             int i, j, k, temp;
             int squareSize = bitmapSize/Size;
+            int shipSize;
             using (Graphics g = Graphics.FromImage(bm))
             using (SolidBrush blackBrush = new SolidBrush(Color.Black))
             using (SolidBrush whiteBrush = new SolidBrush(Color.White))
             using (Pen blackPen = new Pen(Color.Black))
-            using (Pen redPen = new Pen(Color.Red))
+            using (Pen redPen = new Pen(Color.Blue))
             using (Pen greenPen = new Pen(Color.Green))
-            using (Pen darkRedPen = new Pen(Color.DarkRed))
+            using (Pen darkRedPen = new Pen(Color.DarkBlue))
             using (Pen darkGreenPen = new Pen(Color.DarkGreen))
             {
                 p1 = new Point(0, bitmapSize - 1);
@@ -133,15 +134,16 @@ namespace Simulator
 
                             if (Grid[i, j][k].ArmyName == Attackers.Name)
                             {
+                                shipSize = Grid[i, j][k].Type.Number + 2;
                                 //p1 = new Point(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1) + 2));
                                 //p2 = new Point(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)));
                                 if(Grid[i, j][k].Alive)
                                 {
-                                    g.DrawRectangle(greenPen, new Rectangle(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)), 4, 4));
+                                    g.DrawRectangle(darkGreenPen, new Rectangle(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)), shipSize, shipSize));
                                 }
                                 else
                                 {
-                                    //g.DrawRectangle(darkGreenPen, new Rectangle(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)), 4, 4));
+                                    g.DrawRectangle(greenPen, new Rectangle(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)), shipSize, shipSize));
                                 }
                                 
                             }
@@ -151,11 +153,11 @@ namespace Simulator
                                 //p2 = new Point(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)));
                                 if (Grid[i, j][k].Alive)
                                 {
-                                    g.DrawRectangle(redPen, new Rectangle(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)), 4, 4));
+                                    g.DrawRectangle(darkRedPen, new Rectangle(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)), shipSize , shipSize));
                                 }
                                 else
                                 {
-                                    //g.DrawRectangle(darkRedPen, new Rectangle(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)), 4, 4));
+                                    g.DrawRectangle(redPen, new Rectangle(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)), shipSize, shipSize));
                                 }
                             }
                         }
