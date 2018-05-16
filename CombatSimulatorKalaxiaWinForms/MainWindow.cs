@@ -73,8 +73,14 @@ namespace CombatSimulatorKalaxiaWinForms
         private void Combo_Turns_SelectedIndexChanged(object sender, EventArgs e)
         {
             //show the grid of the selected turn
+            ShowBattlefield();
+            
+        }
+
+        private void ShowBattlefield()
+        {
             BattleFieldImage.Image.Dispose();
-            BattleFieldImage.Image = sim.Battle.BattleFieldHistory[Combo_Turns.SelectedIndex].DrawBattleField(bitmapSize);
+            BattleFieldImage.Image = sim.Battle.BattleFieldHistory[Combo_Turns.SelectedIndex].DrawBattleField(bitmapSize, ShowDestroyedShips.Checked);
             BattleFieldImage.Refresh();
         }
 
@@ -86,6 +92,12 @@ namespace CombatSimulatorKalaxiaWinForms
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
 
+        }
+
+        private void ShowDestroyedShips_CheckedChanged(object sender, EventArgs e)
+        {
+            ShowBattlefield();
+            Combo_Turns.Select();
         }
     }
 }

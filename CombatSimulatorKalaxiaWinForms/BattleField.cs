@@ -130,7 +130,7 @@ namespace Simulator
             }
         }
 
-        public Bitmap DrawBattleField(int bitmapSize)
+        public Bitmap DrawBattleField(int bitmapSize, bool showDestroyedShips)
         {
             Bitmap bm = new Bitmap(bitmapSize, bitmapSize);
             Point p1, p2;
@@ -188,7 +188,10 @@ namespace Simulator
                                     }
                                     else
                                     {
-                                        g.DrawRectangle(deadGreenPen, new Rectangle(i * squareSize + ((k + 1) % (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), j * squareSize + (k / (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), shipSize, shipSize));
+                                        if (showDestroyedShips)
+                                        {
+                                            g.DrawRectangle(deadGreenPen, new Rectangle(i * squareSize + ((k + 1) % (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), j * squareSize + (k / (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), shipSize, shipSize));
+                                        }
                                     }
 
                                 }
@@ -202,7 +205,10 @@ namespace Simulator
                                     }
                                     else
                                     {
-                                        g.DrawRectangle(deadBluePen, new Rectangle(i * squareSize + ((k + 1) % (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), j * squareSize + (k / (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), shipSize, shipSize));
+                                        if(showDestroyedShips)
+                                        {
+                                            g.DrawRectangle(deadBluePen, new Rectangle(i * squareSize + ((k + 1) % (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), j * squareSize + (k / (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), shipSize, shipSize));
+                                        }
                                     }
                                 }
                             }

@@ -41,6 +41,7 @@
             this.BattleFieldImage = new System.Windows.Forms.PictureBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.LblWinner = new System.Windows.Forms.Label();
+            this.ShowDestroyedShips = new System.Windows.Forms.CheckBox();
             this.topMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BattleFieldImage)).BeginInit();
             this.SuspendLayout();
@@ -152,12 +153,24 @@
             this.LblWinner.Size = new System.Drawing.Size(0, 17);
             this.LblWinner.TabIndex = 7;
             // 
+            // ShowDestroyedShips
+            // 
+            this.ShowDestroyedShips.AutoSize = true;
+            this.ShowDestroyedShips.Location = new System.Drawing.Point(921, 149);
+            this.ShowDestroyedShips.Name = "ShowDestroyedShips";
+            this.ShowDestroyedShips.Size = new System.Drawing.Size(192, 21);
+            this.ShowDestroyedShips.TabIndex = 8;
+            this.ShowDestroyedShips.Text = "Show the destroyed ships";
+            this.ShowDestroyedShips.UseVisualStyleBackColor = true;
+            this.ShowDestroyedShips.CheckedChanged += new System.EventHandler(this.ShowDestroyedShips_CheckedChanged);
+            // 
             // SimulatorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(1182, 1055);
+            this.Controls.Add(this.ShowDestroyedShips);
             this.Controls.Add(this.LblWinner);
             this.Controls.Add(this.BattleFieldImage);
             this.Controls.Add(this.LblChooseTurn);
@@ -191,6 +204,7 @@
         private System.Windows.Forms.PictureBox BattleFieldImage;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Label LblWinner;
+        private System.Windows.Forms.CheckBox ShowDestroyedShips;
     }
 }
 
