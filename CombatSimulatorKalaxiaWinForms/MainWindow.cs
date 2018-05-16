@@ -16,9 +16,11 @@ namespace CombatSimulatorKalaxiaWinForms
     public partial class SimulatorWindow : Form
     {
         private int numberOfBattles = 1;
-        public int numberOfShips= 21;
-        public int gridSize=5;
-        public int bitmapSize = 500;
+        public int numberOfShips= 150;
+        public int gridSize=7;
+        public int bitmapSize = 800;
+        public int startingGridRows=2;
+        public int startingGridLines=3;
         Simulation sim;
 
         public int NumberOfBattles { get => numberOfBattles; set => numberOfBattles = value; }
@@ -37,7 +39,7 @@ namespace CombatSimulatorKalaxiaWinForms
         {
             int i;
             
-            sim = new Simulation(NumberOfBattles, true, numberOfShips, gridSize);
+            sim = new Simulation(NumberOfBattles, true, numberOfShips, gridSize, startingGridLines,startingGridRows);
             sim.Play();
             Combo_Turns.Items.Clear();
             for (i=0; i<sim.Battle.BattleFieldHistory.Count;i++)

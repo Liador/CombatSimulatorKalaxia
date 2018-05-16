@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 namespace Simulator
 {
     class Army
@@ -9,12 +10,19 @@ namespace Simulator
         private List<Ship> ships;
         private int shipsAlive;
         private bool victory;
+        private List<Ship>[,] startingGrid;
+        private int startingLines;
+        private int startingRows;
+
 
         public List<Ship> Ships { get => ships; set => ships = value; }
         public int ShipsAlive { get => shipsAlive; }
         public bool Victory { get => victory; set => victory = value; }
         public string Name { get => name; set => name = value; }
         public int Id { get => id; }
+        public List<Ship>[,] StartingGrid { get => startingGrid; set => startingGrid = value; }
+        public int StartingLines { get => startingLines; set => startingLines = value; }
+        public int StartingRows { get => startingRows; set => startingRows = value; }
 
         public Army()
         {
@@ -22,6 +30,7 @@ namespace Simulator
             numberOfArmies++;
             shipsAlive = 0;
             Ships = new List<Ship>();
+            
         }
 
         public Army(Ship[] ships)
@@ -55,6 +64,8 @@ namespace Simulator
             this.Ships = army.Ships;
             shipsAlive = Ships.Count;
             Name = army.Name;
+            StartingRows = army.StartingRows;
+            startingLines = army.startingLines;
         }
 
         public void Add(Ship ship)
@@ -150,6 +161,43 @@ namespace Simulator
             else
             {
                 //victory
+            }
+        }
+
+        public void PlaceShips( int lines, int rows)
+        {
+            int i, j;
+            StartingLines = lines;
+            StartingRows = rows;
+            InitStartingGrid();
+            i = 0;
+            j = 0;
+            foreach(Ship s in Ships)
+            {
+                StartingGrid[i, j].Add(s);
+                i++;
+                if (i >= StartingLines)
+                {
+                    j++;
+                    i = 0;
+                    if (j >= StartingRows)
+                    {
+                        j = 0;
+                    }
+                }
+            }
+        }
+
+        private void InitStartingGrid()
+        {
+            int i, j;
+            StartingGrid = new List<Ship>[StartingLines, StartingRows];
+            for (i = 0; i < StartingLines; i++)
+            {
+                for (j = 0; j < StartingRows; j++)
+                {
+                    StartingGrid[i, j] = new List<Ship>();
+                }
             }
         }
 
