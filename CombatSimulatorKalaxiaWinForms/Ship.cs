@@ -423,31 +423,39 @@ namespace Simulator
         public int[] Move(BattleField field, int i, int j)
         {
             Random rand;
-            rand = new Random((int)DateTime.Now.Ticks + new Random(ID).Next());
-            i = i + rand.Next()%3 - 1;
-            if (i < 0)
+            if (Simulation.testMode)
             {
-                i = 0;
+                rand = new Random((int)DateTime.Now.Ticks + new Random(ID).Next());
             }
             else
             {
-                if (i >= field.Size)
+                rand = new Random((int)DateTime.Now.Ticks + new Random(ID).Next());
+                i = i + rand.Next() % 3 - 1;
+                if (i < 0)
                 {
-                    i = field.Size - 1;
+                    i = 0;
+                }
+                else
+                {
+                    if (i >= field.Size)
+                    {
+                        i = field.Size - 1;
+                    }
+                }
+                j = j + rand.Next() % 3 - 1;
+                if (j < 0)
+                {
+                    j = 0;
+                }
+                else
+                {
+                    if (j >= field.Size)
+                    {
+                        j = field.Size - 1;
+                    }
                 }
             }
-            j = j + rand.Next()%3 - 1;
-            if (j < 0)
-            {
-                j = 0;
-            }
-            else
-            {
-                if (j >= field.Size)
-                {
-                    j = field.Size - 1;
-                }
-            }
+            
             MovementLeft--;
             return new int[2] { i, j };
         }

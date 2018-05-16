@@ -10,7 +10,7 @@ namespace Simulator
         private List<Ship>[,] grid;
         private Army attackers;
         private Army defenders;
-        private int size;
+        private readonly int size;
 
         public List<Ship>[,] Grid { get => grid; set => grid = value; }
         public Army Attackers { get => attackers; set => attackers = value; }
@@ -65,6 +65,61 @@ namespace Simulator
 
         public void Init(Army attackers, Army defenders)
         {
+
+            InitGrid();
+            Attackers = attackers;
+            Defenders = defenders;
+            //Grid = new List<Ship>[size, size];
+            PlaceAttackers();
+            PlaceDefenders();
+
+            //for (i = 0; i < Attackers.Ships.Count; i++)
+            //{
+            //    Grid[0, size / 2].Add(Attackers.Ships[i]);
+            //}
+            //Grid[size - 1, size / 2] = new List<Ship>();
+            //for (i = 0; i < Defenders.Ships.Count; i++)
+            //{
+            //    Grid[size - 1, size / 2].Add(Defenders.Ships[i]);
+            //}
+        }
+
+        private void PlaceAttackers()
+        {
+            int i, j, k;
+            int offset;
+            offset = size / 2 - Attackers.StartingLines / 2;
+            for (i = 0; i < Attackers.StartingLines; i++)
+            {
+                for (j = 0; j < Attackers.StartingRows; j++)
+                {
+                    for (k = 0; k < Attackers.StartingGrid[i, j].Count; k++)
+                    {
+                        Grid[offset + i, j].Add(Attackers.StartingGrid[i, j][k]);
+                    }
+                }
+            }
+        }
+
+        private void PlaceDefenders()
+        {
+            int i, j, k;
+            int offset;
+            offset = size / 2 - Defenders.StartingLines / 2;
+            for (i = 0; i < Defenders.StartingLines; i++)
+            {
+                for (j = Defenders.StartingRows-1; j >=0; j--)
+                {
+                    for (k = 0; k < Defenders.StartingGrid[i, j].Count; k++)
+                    {
+                        Grid[offset + i, (size-1)-j].Add(Defenders.StartingGrid[i, j][k]);
+                    }
+                }
+            }
+        }
+
+        private void InitGrid()
+        {
             int i, j;
             for (i = 0; i < Size; i++)
             {
@@ -73,24 +128,9 @@ namespace Simulator
                     Grid[i, j] = new List<Ship>();
                 }
             }
-            Attackers = attackers;
-            Defenders = defenders;
-            //Grid = new List<Ship>[size, size];
-            Grid[0, size/2] = new List<Ship>();
-
-
-            for (i=0; i<Attackers.Ships.Count;i++)
-            {
-                Grid[0, size / 2].Add(Attackers.Ships[i]);
-            }
-            Grid[size - 1, size / 2] = new List<Ship>();
-            for (i = 0; i < Defenders.Ships.Count; i++)
-            {
-                Grid[size-1, size/2].Add(Defenders.Ships[i]);
-            }
         }
 
-        public Bitmap DrawBattleField(int bitmapSize)
+        public Bitmap DrawBattleField(int bitmapSize, bool showDestroyedShips)
         {
             Bitmap bm = new Bitmap(bitmapSize, bitmapSize);
             Point p1, p2;
@@ -148,7 +188,10 @@ namespace Simulator
                                     }
                                     else
                                     {
-                                        g.DrawRectangle(deadGreenPen, new Rectangle(i * squareSize + ((k + 1) % (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), j * squareSize + (k / (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), shipSize, shipSize));
+                                        if (showDestroyedShips)
+                                        {
+                                            g.DrawRectangle(deadGreenPen, new Rectangle(i * squareSize + ((k + 1) % (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), j * squareSize + (k / (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), shipSize, shipSize));
+                                        }
                                     }
 
                                 }
@@ -162,7 +205,10 @@ namespace Simulator
                                     }
                                     else
                                     {
-                                        g.DrawRectangle(deadBluePen, new Rectangle(i * squareSize + ((k + 1) % (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), j * squareSize + (k / (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), shipSize, shipSize));
+                                        if(showDestroyedShips)
+                                        {
+                                            g.DrawRectangle(deadBluePen, new Rectangle(i * squareSize + ((k + 1) % (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), j * squareSize + (k / (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), shipSize, shipSize));
+                                        }
                                     }
                                 }
                             }

@@ -5,7 +5,7 @@ namespace Simulator
     class Simulation
     {
         public static int numberOfBattles = 10;
-        public static bool testMode = true;
+        public static bool testMode = false;
         public static bool fightOnBattleField = true;
         public static int armySize = 10;
         public static int battleFieldSize=5;
@@ -18,15 +18,21 @@ namespace Simulator
         private static Battle battle;
         public static int Army1WinnerCounter = 0;
         public static int Army2WinnerCounter = 0;
+        private static int startingGridRows = 1;
+        private static int startingGridLines = 1;
 
         public Battle Battle { get => battle; }
+        public static int StartingGridRows { get => startingGridRows; set => startingGridRows = value; }
+        public static int StartingGridLines { get => startingGridLines; set => startingGridLines = value; }
 
-        public Simulation(int numberOfBat, bool fightOnBattleF, int sizeOfArmy, int battlefieldSize)
+        public Simulation(int numberOfBat, bool fightOnBattleF, int sizeOfArmy, int battlefieldSize, int startingGridLines, int startingGridRows)
         {
             numberOfBattles = numberOfBat;
             fightOnBattleField = fightOnBattleF;
             armySize = sizeOfArmy;
             battleFieldSize = battlefieldSize;
+            StartingGridLines = startingGridLines;
+            StartingGridRows = startingGridRows;
             Init();
         }
 
@@ -55,12 +61,12 @@ namespace Simulator
 
                 army1 = new Army()
                 {
-                    Name = "Army1"
+                    Name = "Blue"
                 };
 
                 army2 = new Army()
                 {
-                    Name = "Army2"
+                    Name = "Green"
                 };
 
 
@@ -70,7 +76,7 @@ namespace Simulator
                 watch.Restart();
                 Battle.Start();
                 watch.Stop();
-                if (Battle.Winner == "Army1")
+                if (Battle.Winner == army1.Name)
                 {
                     Army1WinnerCounter++;
                 }
@@ -95,23 +101,25 @@ namespace Simulator
 
                 army1 = new Army()
                 {
-                    Name = "Army1"
+                    Name = "Blue"
                 };
 
                 army2 = new Army()
                 {
-                    Name = "Army2"
+                    Name = "Green"
                 };
 
 
                 FillArmys(army1, army2, shipList);
+                army1.PlaceShips(StartingGridLines,StartingGridRows);
+                army2.PlaceShips(StartingGridLines, startingGridRows);
 
                 battle = new Battle(army1, army2, battleFieldSize);
                 watch.Restart();
                 Battle.Start();
                 Battle.Play();
                 watch.Stop();
-                if (Battle.Winner == "Army1")
+                if (Battle.Winner == army1.Name)
                 {
                     Army1WinnerCounter++;
                 }
@@ -129,7 +137,7 @@ namespace Simulator
             for (i = 0; i < shipList.Count; i++)
             {
                 //if(i%99<=51)
-                if(i%2<=0   )
+                if(i%2<=0)
                 {
                     army1.Add(shipList[i]);
                 }
