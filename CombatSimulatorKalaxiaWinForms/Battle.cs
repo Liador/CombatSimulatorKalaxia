@@ -153,18 +153,24 @@ namespace Simulator
                     while (k < Field.Grid[i, j].ShipsList.Count)
                     {
                         shipTemp = Field.Grid[i, j].ShipsList[k];
-                        if (Field.Grid[i, j].ShipsList[k].Alive && shipTemp.MovementLeft > 0)
+                        if(shipTemp.Alive)
                         {
-                            Field.Grid[i, j].ShipsList.Remove(shipTemp);
-
-                            Field.Grid[shipTemp.Move(Field, i, j)[0], shipTemp.Move(Field, i, j)[1]].ShipsList.Add(shipTemp);
+                            MakeShipMove(shipTemp, i, j);
                         }
-                        else
-                        {
-                            k++;
-                        }
+                        k++;
                     }
                 }
+            }
+        }
+
+        private void MakeShipMove(Ship shipTemp, int i, int j)
+        {
+            int[] nextSquare = { i, j };
+            while(shipTemp.MovementLeft > 0)
+            {
+                Field.Grid[nextSquare[0], nextSquare[1]].ShipsList.Remove(shipTemp);
+                nextSquare = shipTemp.Move(Field, nextSquare[0], nextSquare[1]);
+                Field.Grid[nextSquare[0], nextSquare[1]].ShipsList.Add(shipTemp);
             }
         }
 

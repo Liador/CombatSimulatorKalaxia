@@ -7,7 +7,7 @@ namespace Simulator
 
         public List<ShipType> FavoriteTargets { get => favoriteTargets; set => favoriteTargets = value; }
 
-        public ShipSubType(string name, int number, List<ShipType> favoriteTargets) : base(name, number)
+        public ShipSubType(string name, int number, List<ShipType> favoriteTargets) : base(name, number,0)
         {
             FavoriteTargets = favoriteTargets;
         }   
