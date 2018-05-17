@@ -13,6 +13,7 @@ namespace Simulator
         private List<Ship>[,] startingGrid;
         private int startingLines;
         private int startingRows;
+        private bool attacking;
 
 
         public List<Ship> Ships { get => ships; set => ships = value; }
@@ -23,6 +24,7 @@ namespace Simulator
         public List<Ship>[,] StartingGrid { get => startingGrid; set => startingGrid = value; }
         public int StartingLines { get => startingLines; set => startingLines = value; }
         public int StartingRows { get => startingRows; set => startingRows = value; }
+        public bool Attacking { get => attacking; set => attacking = value; }
 
         public Army()
         {
@@ -66,6 +68,7 @@ namespace Simulator
             Name = army.Name;
             StartingRows = army.StartingRows;
             startingLines = army.startingLines;
+            Attacking = army.attacking;
         }
 
         public void Add(Ship ship)
@@ -206,16 +209,34 @@ namespace Simulator
             Victory = true;
         }
 
+        public void IsAttacker()
+        {
+            Attacking = true;
+            foreach(Ship s in Ships)
+            {
+                s.Attacking = true;
+            }
+        }
+
+        public void IsDefender()
+        {
+            Attacking = false;
+            foreach(Ship s in Ships)
+            {
+                s.Attacking = false;
+            }
+        }
+
         public override string ToString()
         {
-            int i;
+            //int i;
             string retval;
             retval = "nbr ships alive :"+ShipsAlive+"\n";
-            if (Simulation.numberOfBattles == 1)
-                for (i = 0; i < Ships.Count; i++)
-                {
-                    retval += Ships[i].ToString() + "\n";
-                }
+            //if (Simulation.numberOfBattles == 1)
+            //    for (i = 0; i < Ships.Count; i++)
+            //    {
+            //        retval += Ships[i].ToString() + "\n";
+            //    }
             return retval;
         }
     }
