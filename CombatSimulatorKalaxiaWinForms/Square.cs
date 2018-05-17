@@ -99,7 +99,31 @@ namespace Simulator
             int count = 0;
             foreach (Ship s in ShipsList)
             {
-                if (armyName == s.ArmyName && s.Alive && s.Type.Number==type.Number)
+                if (armyName == s.ArmyName && s.Alive && s.Type.Number == type.Number)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+        public int CountShipsOfType(ShipType type, bool attackers)
+        {
+            int count = 0;
+            foreach (Ship s in ShipsList)
+            {
+                if (s.Attacking==attackers && s.Alive && s.Type.Number == type.Number)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+        public int CountAttackingShips()
+        {
+            int count = 0;
+            foreach(Ship s in ShipsList)
+            {
+                if(s.Attacking)
                 {
                     count++;
                 }

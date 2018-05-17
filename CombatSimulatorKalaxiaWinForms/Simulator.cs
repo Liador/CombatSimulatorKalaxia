@@ -196,37 +196,59 @@ namespace Simulator
         private static void AddSubTypes(List<ShipSubType> shipSubTypes, List<ShipType> types)
         {
             List<ShipType> favoriteTargets;
+            List<ShipType> worstEnnemies;
+            worstEnnemies = new List<ShipType>
+            {
+                types[2],
+                types[1],
+                types[0]
+            };
             favoriteTargets = new List<ShipType>
             {
                 types[0],
                 types[1],
                 types[2]
             };
-            shipSubTypes.Add(new ShipSubType("interceptor", 50, types));
-
+            shipSubTypes.Add(new ShipSubType("interceptor", 50, favoriteTargets, worstEnnemies));
+            worstEnnemies = new List<ShipType>
+            {
+                types[2],
+                types[0],
+                types[1]
+            };
             favoriteTargets = new List<ShipType>()
             {
                 types[1],
                 types[0],
                 types[2],
             };
-            shipSubTypes.Add(new ShipSubType("light fighter", 51, types));
-
+            shipSubTypes.Add(new ShipSubType("light fighter", 51, favoriteTargets, worstEnnemies));
+            worstEnnemies = new List<ShipType>
+            {
+                types[2],
+                types[1],
+                types[0]
+            };
             favoriteTargets = new List<ShipType>
             {
                 types[1],
                 types[2],
                 types[0]
             };
-            shipSubTypes.Add(new ShipSubType("heavy fighter", 52, types));
-
+            shipSubTypes.Add(new ShipSubType("heavy fighter", 52, favoriteTargets, worstEnnemies));
+            worstEnnemies = new List<ShipType>
+            {
+                types[0],
+                types[1],
+                types[2]
+            };
             favoriteTargets = new List<ShipType>
             {
                 types[2],
-                types[1],
-                types[0]
+                types[0],
+                types[1]
             };
-            shipSubTypes.Add(new ShipSubType("bomber", 53, types));
+            shipSubTypes.Add(new ShipSubType("bomber", 53, favoriteTargets, worstEnnemies));
 
         }
 

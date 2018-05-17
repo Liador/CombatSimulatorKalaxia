@@ -26,7 +26,9 @@ namespace Simulator
         public Battle (Army attackers, Army defenders ,int size)
         {
             Attackers = attackers;
+            Attackers.IsAttacker();
             Defenders = defenders;
+            Defenders.IsDefender();
             Winner = "";
             shipList = new List<Ship>();
             foreach (Ship s in Attackers.Ships)
@@ -103,7 +105,7 @@ namespace Simulator
                 while (!attackers.Victory && !defenders.Victory)
                 {
                     Thread.Sleep(1);
-                    AllShipsAttack();
+                    //AllShipsAttack();
                     AllShipsMove();
                     Attackers.CountShipsAlive();
                     Defenders.CountShipsAlive();
@@ -166,11 +168,13 @@ namespace Simulator
         private void MakeShipMove(Ship shipTemp, int i, int j)
         {
             int[] nextSquare = { i, j };
-            while(shipTemp.MovementLeft > 0)
+            shipTemp.Attack(Field, nextSquare[0], nextSquare[1]);
+            while (shipTemp.MovementLeft > 0)
             {
                 Field.Grid[nextSquare[0], nextSquare[1]].ShipsList.Remove(shipTemp);
                 nextSquare = shipTemp.Move(Field, nextSquare[0], nextSquare[1]);
                 Field.Grid[nextSquare[0], nextSquare[1]].ShipsList.Add(shipTemp);
+                shipTemp.Attack(Field, nextSquare[0], nextSquare[1]);   
             }
         }
 
@@ -195,7 +199,7 @@ namespace Simulator
 
         public override string ToString()
         {
-            return "----------------------------------------------------\nAttackers :" + Attackers.ToString() + "\nDefenders :" + Defenders.ToString()+ "\n----------------------------------------------------\n"; 
+            return "Attackers :" + Attackers.ToString() + "\nDefenders :" + Defenders.ToString(); 
         }
     }
 }

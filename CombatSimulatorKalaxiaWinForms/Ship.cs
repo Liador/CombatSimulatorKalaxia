@@ -25,9 +25,10 @@ namespace Simulator
         private List<Ship> hangar;
         private string armyName;
         private int armyId;
-        private int missedMissiles;
+        private int dodgedMissiles;
         private int firedMissiles;
         private int movementLeft;
+        private bool attacking;
 
         public int Health
         {
@@ -89,6 +90,7 @@ namespace Simulator
         public int MovementLeft { get => movementLeft; set => movementLeft = value; }
         public int ArmyId { get => armyId; set => armyId = value; }
         public int Moral { get => moral; set => moral = value; }
+        public bool Attacking { get => attacking; set => attacking = value; }
 
         public Ship(int hp, int blueShield, int moveSpeed, Weapon[] weapons, ShipType type, ShipSubType subType)
         {
@@ -236,7 +238,7 @@ namespace Simulator
                             {
                                 //Console.WriteLine("The missile missed its target.\n");
                             }
-                            missedMissiles++;
+                            dodgedMissiles++;
                         }
                     }
                     break;
@@ -327,7 +329,7 @@ namespace Simulator
                 retval = "ID:" + ID + " " + Type.Name + " " + SubType.Name + " " + Health + "hp " + BlueShield + "sp " + MoveSpeed + " moveSpeed ";
 
                 if (firedMissiles > 0)
-                    retval += missedMissiles + "/" + firedMissiles + " missiles missed this ship";
+                    retval += dodgedMissiles + "/" + firedMissiles + " missiles missed this ship";
             }
 
             //for (i = 0; i < weapons.length; i++)
@@ -442,10 +444,46 @@ namespace Simulator
 
         public int[] Move(BattleField field, int i, int j)
         {
+            int[] coord = { i, j };
+            int[] newCoord;
+            int value;
+            int valueTemp;
+            int numberOfEnnemies;
+            int numberOfAllies;
+            int numberOfTargets;
+            int numberOfThreats;
             Random rand;
             if (Simulation.testMode)
             {
+                newCoord = new int[2];
                 rand = new Random((int)DateTime.Now.Ticks + new Random(ID).Next());
+                i = 0;
+                j = 0;
+                value = 0;
+                for(i=0;i<field.Size;i++)
+                {
+                    for (j = 0; j < field.Size; j++)
+                    {
+                        numberOfAllies = field.Grid[i, j].CountAttackingShips();
+                        numberOfEnnemies = field.Grid[i, j].CountAliveShips() - numberOfAllies;
+                        numberOfTargets = field.Grid[i, j].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                        numberOfThreats = field.Grid[i, j].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                        valueTemp = numberOfTargets * 4 - numberOfThreats * 2 + numberOfAllies - numberOfEnnemies;
+                        if (valueTemp > value)
+                        {
+                            newCoord[0] = i;
+                            newCoord[1] = j;
+                            value = valueTemp;
+                        }
+                        else
+                        {
+                            if (value == valueTemp)
+                            {
+                                
+                            }
+                        }
+                    }
+                }
             }
             else
             {
