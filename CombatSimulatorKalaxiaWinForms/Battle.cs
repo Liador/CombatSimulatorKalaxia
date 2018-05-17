@@ -152,14 +152,14 @@ namespace Simulator
                 for (j = 0; j < Field.Size; j++)
                 {
                     k = 0;
-                    while (k < Field.Grid[i, j].Count)
+                    while (k < Field.Grid[i, j].ShipsList.Count)
                     {
-                        shipTemp = Field.Grid[i, j][k];
-                        if (Field.Grid[i, j][k].Alive && shipTemp.MovementLeft > 0)
+                        shipTemp = Field.Grid[i, j].ShipsList[k];
+                        if (Field.Grid[i, j].ShipsList[k].Alive && shipTemp.MovementLeft > 0)
                         {
-                            Field.Grid[i, j].Remove(shipTemp);
+                            Field.Grid[i, j].ShipsList.Remove(shipTemp);
 
-                            Field.Grid[shipTemp.Move(Field, i, j)[0], shipTemp.Move(Field, i, j)[1]].Add(shipTemp);
+                            Field.Grid[shipTemp.Move(Field, i, j)[0], shipTemp.Move(Field, i, j)[1]].ShipsList.Add(shipTemp);
                         }
                         else
                         {
@@ -178,7 +178,7 @@ namespace Simulator
             {
                 for (j = 0; j < Field.Size; j++)
                 {
-                    foreach (Ship s in Field.Grid[i, j])
+                    foreach (Ship s in Field.Grid[i, j].ShipsList)
                     {
                         if (s.Alive)
                         {

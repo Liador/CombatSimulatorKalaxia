@@ -66,6 +66,7 @@
     <Compile Include="ShipType.cs" />
     <Compile Include="Simulator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Square.cs" />
     <Compile Include="Weapon.cs" />
     <EmbeddedResource Include="BattleSettingsWindow.resx">
       <DependentUpon>BattleSettingsWindow.cs</DependentUpon>
