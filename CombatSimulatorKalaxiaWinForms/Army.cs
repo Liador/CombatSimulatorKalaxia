@@ -6,7 +6,7 @@ namespace Simulator
     {
         private static int numberOfArmies = 0; //used to give a unique ID to all the ships
         private string name;
-        private int id;
+        private readonly int id;
         private List<Ship> ships;
         private int shipsAlive;
         private bool victory;
@@ -57,7 +57,7 @@ namespace Simulator
             shipsAlive = Ships.Count;
         }
 
-        public Army(Army army)
+        public Army(Army army)//creates a copy of the army (same ID)
         {
             id = army.Id;
             Ships = new List<Ship>();

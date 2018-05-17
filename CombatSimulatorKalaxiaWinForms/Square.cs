@@ -10,9 +10,18 @@ namespace Simulator
     {
         private List<Ship> shipsList;
         private int numberOfDestroyedShips;
+        private int numberOfAliveShips;
 
-        public List<Ship> ShipsList { get => shipsList; set => shipsList = value; }
+        public List<Ship> ShipsList { get => shipsList;
+            set
+            {
+                shipsList = value;
+                NumberOfAliveShips = CountAliveShips();
+                NumberOfDestroyedShips = shipsList.Count - NumberOfAliveShips;
+            }
+        }
         public int NumberOfDestroyedShips { get => numberOfDestroyedShips; set => numberOfDestroyedShips = value; }
+        public int NumberOfAliveShips { get => numberOfAliveShips; set => numberOfAliveShips = value; }
 
         public Square()
         {
@@ -25,12 +34,72 @@ namespace Simulator
             shipsList = sq.shipsList;
             numberOfDestroyedShips = sq.numberOfDestroyedShips;
         }
-        public int CountShipsFromArmy(string armyname)
+        public int CountShipsFromArmy(string armyName)
         {
-            int count=0;
-            foreach(Ship s in ShipsList)
+            int count = 0;
+            foreach (Ship s in ShipsList)
             {
-                if(armyname == s.ArmyName)
+                if (armyName == s.ArmyName)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+        public int CountAliveShips()
+        {
+            int count = 0;
+            foreach (Ship s in ShipsList)
+            {
+                if (s.Alive)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+        public int CountDestroyedShips()
+        {
+            int count = 0;
+            foreach (Ship s in ShipsList)
+            {
+                if (!s.Alive)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+        public int CountAliveShips(string armyName)
+        {
+            int count = 0;
+            foreach (Ship s in ShipsList)
+            {
+                if (armyName == s.ArmyName && s.Alive)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+        public int CountDestroyedShips(string armyName)
+        {
+            int count = 0;
+            foreach (Ship s in ShipsList)
+            {
+                if (armyName == s.ArmyName && !s.Alive)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+        public int CountShipsOfType(ShipType type, string armyName)
+        {
+            int count = 0;
+            foreach (Ship s in ShipsList)
+            {
+                if (armyName == s.ArmyName && s.Alive && s.Type.Number==type.Number)
                 {
                     count++;
                 }

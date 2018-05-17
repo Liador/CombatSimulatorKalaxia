@@ -7,11 +7,11 @@ namespace Simulator
     class Battle
     {
         private Army attackers;
-        private int battleTime;
+        //private int battleTime;
         private Army defenders;
         private string winner;
         private int numberOfTurns;
-        List<Ship> shipList;
+        readonly List<Ship> shipList;
         BattleField field;
         List<BattleField> battleFieldHistory;
 
@@ -40,7 +40,7 @@ namespace Simulator
             ShipList.Sort();
             Field = new BattleField(size);// size odd = symetrical battlefield
             NumberOfTurns = 0;
-            battleTime = 0;
+            //battleTime = 0;
         }
 
         public void Start()
@@ -55,8 +55,6 @@ namespace Simulator
 
         public void Play(int numberOfTurns)
         {
-            int i, j, k;
-            Ship shipTemp;
             int turnPlayed = 0;
             if (Simulation.fightOnBattleField)
             {
