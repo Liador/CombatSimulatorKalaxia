@@ -7,19 +7,20 @@ namespace Simulator
 {
     class BattleField
     {
-        private List<Ship>[,] grid;
+        private Square[,] grid;
         private Army attackers;
         private Army defenders;
         private readonly int size;
 
-        public List<Ship>[,] Grid { get => grid; set => grid = value; }
+
         public Army Attackers { get => attackers; set => attackers = value; }
         public Army Defenders { get => defenders; set => defenders = value; }
         public int Size { get => size; }
+        internal Square[,] Grid { get => grid; set => grid = value; }
 
         public BattleField(int size,Army attackers, Army defenders)
         {
-            Grid = new List<Ship>[size,size];
+            Grid = new Square[size,size];
             Attackers = attackers;
             Defenders = defenders;
             this.size = size;
@@ -28,7 +29,7 @@ namespace Simulator
         public BattleField(int size)
         {
             this.size = size;
-            Grid = new List<Ship>[size, size];
+            Grid = new Square[size, size];
         }
 
         public BattleField(BattleField battlefield)
@@ -36,7 +37,7 @@ namespace Simulator
             int i, j, k;
             Ship shipTemp;
             size = battlefield.Size;
-            Grid = new List<Ship>[size, size];
+            Grid = new Square[size, size];
             Attackers = new Army(battlefield.Attackers);
             Defenders = new Army(battlefield.Defenders);
             Attackers.Ships = new List<Ship>();
@@ -45,11 +46,11 @@ namespace Simulator
             {
                 for(j=0;j<size; j++)
                 {
-                    Grid[i, j] = new List<Ship>();
-                    for(k=0;k<battlefield.Grid[i,j].Count;k++)
+                    Grid[i, j] = new Square();
+                    for(k=0;k<battlefield.Grid[i,j].ShipsList.Count;k++)
                     {
-                        shipTemp = new Ship(battlefield.Grid[i, j][k]);
-                        if(battlefield.Grid[i, j][k].ArmyName==Attackers.Name)
+                        shipTemp = new Ship(battlefield.Grid[i, j].ShipsList[k]);
+                        if(battlefield.Grid[i, j].ShipsList[k].ArmyName==Attackers.Name)
                         {
                             Attackers.Add(shipTemp);
                         }
@@ -57,7 +58,7 @@ namespace Simulator
                         {
                             Defenders.Add(shipTemp);
                         }
-                        Grid[i,j].Add(shipTemp);
+                        Grid[i,j].ShipsList.Add(shipTemp);
                     }
                 }
             }
@@ -95,7 +96,7 @@ namespace Simulator
                 {
                     for (k = 0; k < Attackers.StartingGrid[i, j].Count; k++)
                     {
-                        Grid[offset + i, j].Add(Attackers.StartingGrid[i, j][k]);
+                        Grid[offset + i, j].ShipsList.Add(Attackers.StartingGrid[i, j][k]);
                     }
                 }
             }
@@ -112,7 +113,7 @@ namespace Simulator
                 {
                     for (k = 0; k < Defenders.StartingGrid[i, j].Count; k++)
                     {
-                        Grid[offset + i, (size-1)-j].Add(Defenders.StartingGrid[i, j][k]);
+                        Grid[offset + i, (size-1)-j].ShipsList.Add(Defenders.StartingGrid[i, j][k]);
                     }
                 }
             }
@@ -125,7 +126,7 @@ namespace Simulator
             {
                 for (j = 0; j < Size; j++)
                 {
-                    Grid[i, j] = new List<Ship>();
+                    Grid[i, j] = new Square();
                 }
             }
         }
@@ -183,18 +184,18 @@ namespace Simulator
                 {
                     for (j = 0; j < Size; j++)
                     {
-                        temp = Grid[i, j].Count;
+                        temp = Grid[i, j].ShipsList.Count;
                         if (temp > 0)
                         {
                             numberOfRows = temp / (int)Math.Floor(Math.Sqrt(temp));
                             for (k = 0; k < temp; k++)
                             {
-                                shipSize = Grid[i, j][k].Type.Number*2 + 3;
-                                if (Grid[i, j][k].ArmyName == Attackers.Name)
+                                shipSize = Grid[i, j].ShipsList[k].Type.Number*2 + 3;
+                                if (Grid[i, j].ShipsList[k].ArmyName == Attackers.Name)
                                 {
                                     //p1 = new Point(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1) + 2));
                                     //p2 = new Point(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)));
-                                    if (Grid[i, j][k].Alive)
+                                    if (Grid[i, j].ShipsList[k].Alive)
                                     {
                                         rect = new Rectangle(i * squareSize + ((k + 1) % (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 1)), j * squareSize + (k / (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), shipSize, shipSize);
                                         g.DrawRectangle(aliveGreenPen, rect);
@@ -215,7 +216,7 @@ namespace Simulator
                                 {
                                     //p1 = new Point(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)) + 2);
                                     //p2 = new Point(i * squareSize + squareSize / 2, j * squareSize + (k + 1) * (squareSize / (temp + 1)));
-                                    if (Grid[i, j][k].Alive)
+                                    if (Grid[i, j].ShipsList[k].Alive)
                                     {
                                         rect = new Rectangle(i * squareSize + ((k + 1) % (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 1)), j * squareSize + (k / (temp / numberOfRows) + 1) * (squareSize / (numberOfRows + 2)), shipSize, shipSize);
                                         g.DrawRectangle(aliveBluePen, rect);
@@ -250,7 +251,7 @@ namespace Simulator
                 for(j=0; j<Size;j++)
                 {
                     number = 0;
-                    foreach(Ship s in Grid[i,j])
+                    foreach(Ship s in Grid[i,j].ShipsList)
                     {
                         if(s.Alive)
                         {

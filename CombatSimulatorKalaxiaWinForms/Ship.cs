@@ -16,6 +16,7 @@ namespace Simulator
         private int maxBlueShield;
         private int greyShield;
         private int maxGreyShield;
+        private int moral;
         private int moveSpeed;
         private int initiative;
         private List<Weapon> weapons;
@@ -87,6 +88,7 @@ namespace Simulator
         public ShipSubType SubType { get => subType; set => subType = value; }
         public int MovementLeft { get => movementLeft; set => movementLeft = value; }
         public int ArmyId { get => armyId; set => armyId = value; }
+        public int Moral { get => moral; set => moral = value; }
 
         public Ship(int hp, int blueShield, int moveSpeed, Weapon[] weapons, ShipType type, ShipSubType subType)
         {
@@ -103,6 +105,7 @@ namespace Simulator
             SubType = subType;
             Alive = true;
             ID = numberOfShips;
+            moral = 100;
             leftToFire = new int[Weapons.Count];
             Reload();
             numberOfShips++;
@@ -123,11 +126,12 @@ namespace Simulator
             SubType = subType;
             Alive = true;
             ID = numberOfShips;
+            moral = 100;
             leftToFire = new int[Weapons.Count];
             Reload();
             numberOfShips++;
         }
-        public Ship(Ship ship)
+        public Ship(Ship ship) //create a new ship based on the model of the ship in parameter
         {
             Health = ship.Health;
             BlueShield = ship.BlueShield;
@@ -138,9 +142,25 @@ namespace Simulator
             SubType = ship.SubType;
             Alive = ship.Alive;
             ID = numberOfShips;
+            moral = ship.moral;
             leftToFire = new int[Weapons.Count];
             Reload();
             numberOfShips++;
+        }
+        public Ship(Ship ship,int id) //create a copy of the ship in parameter (same unique ID)
+        {
+            Health = ship.Health;
+            BlueShield = ship.BlueShield;
+            MaxBlueShield = BlueShield;
+            MoveSpeed = ship.MoveSpeed;
+            Weapons = ship.Weapons;
+            Type = ship.Type;
+            SubType = ship.SubType;
+            Alive = ship.Alive;
+            ID = ship.ID;
+            moral = ship.moral;
+            leftToFire = new int[Weapons.Count];
+            Reload();
         }
         public void Refill()
         {
@@ -380,24 +400,24 @@ namespace Simulator
                             j = 0;
                         while (j <= limJ)
                         {
-                            for (l = 0; l < field.Grid[i, j].Count && leftToFire[m] > 0; l++)
+                            for (l = 0; l < field.Grid[i, j].ShipsList.Count && leftToFire[m] > 0; l++)
                             {
-                                if (field.Grid[i, j][l].ArmyName != this.ArmyName && field.Grid[i, j][l].Alive && leftToFire[m] > 0)
+                                if (field.Grid[i, j].ShipsList[l].ArmyName != this.ArmyName && field.Grid[i, j].ShipsList[l].Alive && leftToFire[m] > 0)
                                 {
-                                    if (field.Grid[i, j][l].Type.Number == SubType.FavoriteTargets[k].Number)
+                                    if (field.Grid[i, j].ShipsList[l].Type.Number == SubType.FavoriteTargets[k].Number)
                                     {
-                                        while (leftToFire[m] > 0 && field.Grid[i, j][l].Alive)
+                                        while (leftToFire[m] > 0 && field.Grid[i, j].ShipsList[l].Alive)
                                         {
                                             if (Simulation.numberOfBattles == 1)
                                             {
-                                                if (!field.Grid[i, j][l].TakeDamage(Weapons[m]))
+                                                if (!field.Grid[i, j].ShipsList[l].TakeDamage(Weapons[m]))
                                                 {
                                                     //ship destroyed
                                                 }
                                             }
                                             else
                                             {
-                                                field.Grid[i, j][l].TakeDamage(Weapons[m]);
+                                                field.Grid[i, j].ShipsList[l].TakeDamage(Weapons[m]);
                                             }
                                             leftToFire[m]--;
                                         }
