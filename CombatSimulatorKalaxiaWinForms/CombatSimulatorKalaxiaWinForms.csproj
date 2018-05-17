@@ -54,6 +54,7 @@
     <Compile Include="BattleSettingsWindow.Designer.cs">
       <DependentUpon>BattleSettingsWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Calcul.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
