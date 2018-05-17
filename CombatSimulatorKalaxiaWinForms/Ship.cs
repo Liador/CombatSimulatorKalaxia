@@ -164,7 +164,7 @@ namespace Simulator
         }
         public void Refill()
         {
-            movementLeft =1;
+            movementLeft = Type.NumberOfMovement +subType.NumberOfMovement;
         }
         public void Reload()
         {

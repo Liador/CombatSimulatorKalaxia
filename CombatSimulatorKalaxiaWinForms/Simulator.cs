@@ -188,9 +188,9 @@ namespace Simulator
 
         private static void AddShipTypes(List<ShipType> shipTypes)
         {
-            shipTypes.Add(new ShipType("Light", 0));
-            shipTypes.Add(new ShipType("Medium", 1));
-            shipTypes.Add(new ShipType("Heavy", 2));
+            shipTypes.Add(new ShipType("Light", 0,2));
+            shipTypes.Add(new ShipType("Medium", 1,1));
+            shipTypes.Add(new ShipType("Heavy", 2,1));
         }
 
         private static void AddSubTypes(List<ShipSubType> shipSubTypes, List<ShipType> types)
