@@ -118,12 +118,12 @@ namespace Simulator
             }
             return count;
         }
-        public int CountAttackingShips()
+        public int CountAlliedShips(bool attacker)
         {
             int count = 0;
             foreach(Ship s in ShipsList)
             {
-                if(s.Attacking)
+                if(s.Attacking==attacker)
                 {
                     count++;
                 }

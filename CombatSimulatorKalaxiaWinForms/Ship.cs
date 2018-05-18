@@ -149,7 +149,7 @@ namespace Simulator
             Reload();
             numberOfShips++;
         }
-        public Ship(Ship ship,int id) //create a copy of the ship in parameter (same unique ID)
+        public Ship(Ship ship, int id) //create a copy of the ship in parameter (same unique ID)
         {
             Health = ship.Health;
             BlueShield = ship.BlueShield;
@@ -166,7 +166,7 @@ namespace Simulator
         }
         public void Refill()
         {
-            movementLeft = Type.NumberOfMovement +subType.NumberOfMovement;
+            movementLeft = Type.NumberOfMovement + subType.NumberOfMovement;
         }
         public void Reload()
         {
@@ -446,12 +446,14 @@ namespace Simulator
         {
             int[] coord = { i, j };
             int[] newCoord;
+            int[] nextMove;
             int value;
             int valueTemp;
             int numberOfEnnemies;
             int numberOfAllies;
             int numberOfTargets;
             int numberOfThreats;
+            int direction;
             Random rand;
             if (Simulation.testMode)
             {
@@ -460,15 +462,22 @@ namespace Simulator
                 i = 0;
                 j = 0;
                 value = 0;
-                for(i=0;i<field.Size;i++)
+                for (i = 0; i < field.Size; i++)
                 {
                     for (j = 0; j < field.Size; j++)
                     {
-                        numberOfAllies = field.Grid[i, j].CountAttackingShips();
+                        numberOfAllies = field.Grid[i, j].CountAlliedShips(Attacking);
                         numberOfEnnemies = field.Grid[i, j].CountAliveShips() - numberOfAllies;
                         numberOfTargets = field.Grid[i, j].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
                         numberOfThreats = field.Grid[i, j].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
-                        valueTemp = numberOfTargets * 4 - numberOfThreats * 2 + numberOfAllies - numberOfEnnemies;
+                        if(numberOfTargets>0)
+                        {
+                            valueTemp = numberOfTargets * 4 - numberOfThreats * 2 + numberOfAllies - numberOfEnnemies;
+                        }
+                        else
+                        {
+                            valueTemp = numberOfEnnemies;
+                        }
                         if (valueTemp > value)
                         {
                             newCoord[0] = i;
@@ -479,11 +488,406 @@ namespace Simulator
                         {
                             if (value == valueTemp)
                             {
-                                
+                                if (Calcul.Distance(coord[0], coord[1], i, j) < Calcul.Distance(coord[0], coord[1], newCoord[0], newCoord[1]))
+                                {
+                                    newCoord[0] = i;
+                                    newCoord[1] = j;
+                                }
                             }
                         }
                     }
                 }
+                nextMove = new int[] { coord[0], coord[1] };
+                direction = 0;
+                if (newCoord[0] > coord[0])
+                {
+                    nextMove[0]++;
+                    direction += 0b1;
+                }
+                else
+                {
+                    if (newCoord[0] < coord[0])
+                    {
+                        nextMove[0]--;
+                        direction += 0b10;
+                    }
+                    else
+                    {
+                        direction += 0b100;
+                    }
+                }
+                if (newCoord[1] > coord[1])
+                {
+                    nextMove[1]++;
+                    direction += 0b1000;
+                }
+                else
+                {
+                    if (newCoord[1] < coord[1])
+                    {
+                        nextMove[1]--;
+                        direction += 0b10000;
+                    }
+                    else
+                    {
+                        direction += 0b100000;
+                    }
+                }
+                numberOfAllies = field.Grid[nextMove[0], nextMove[1]].CountAlliedShips(Attacking);
+                numberOfEnnemies = field.Grid[nextMove[0], nextMove[1]].CountAliveShips() - numberOfAllies;
+                numberOfTargets = field.Grid[nextMove[0], nextMove[1]].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                numberOfThreats = field.Grid[nextMove[0], nextMove[1]].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                value = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                newCoord[0] = nextMove[0];
+                newCoord[1] = nextMove[1];
+
+                switch (direction)
+                {
+                    case 0b001001://+1;+1
+                        numberOfAllies = field.Grid[coord[0] + 1, coord[1]].CountAlliedShips(Attacking);
+                        numberOfEnnemies = field.Grid[coord[0] + 1, coord[1]].CountAliveShips() - numberOfAllies;
+                        numberOfTargets = field.Grid[coord[0] + 1, coord[1]].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                        numberOfThreats = field.Grid[coord[0] + 1, coord[1]].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                        valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                        if (value < valueTemp)
+                        {
+                            newCoord[0] = coord[0] + 1;
+                            newCoord[1] = coord[1];
+                            value = valueTemp;
+                        }
+                        numberOfAllies = field.Grid[coord[0], coord[1] + 1].CountAlliedShips(Attacking);
+                        numberOfEnnemies = field.Grid[coord[0], coord[1] + 1].CountAliveShips() - numberOfAllies;
+                        numberOfTargets = field.Grid[coord[0], coord[1] + 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                        numberOfThreats = field.Grid[coord[0], coord[1] + 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                        valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                        if (value < valueTemp)
+                        {
+                            newCoord[0] = coord[0];
+                            newCoord[1] = coord[1] + 1;
+                            value = valueTemp;
+                        }
+                        break;
+                    case 0b001010://-1;+1
+                        numberOfAllies = field.Grid[coord[0] - 1, coord[1]].CountAlliedShips(Attacking);
+                        numberOfEnnemies = field.Grid[coord[0] - 1, coord[1]].CountAliveShips() - numberOfAllies;
+                        numberOfTargets = field.Grid[coord[0] - 1, coord[1]].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                        numberOfThreats = field.Grid[coord[0] - 1, coord[1]].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                        valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                        if (value < valueTemp)
+                        {
+                            newCoord[0] = coord[0] - 1;
+                            newCoord[1] = coord[1];
+                            value = valueTemp;
+                        }
+                        numberOfAllies = field.Grid[coord[0], coord[1] + 1].CountAlliedShips(Attacking);
+                        numberOfEnnemies = field.Grid[coord[0], coord[1] + 1].CountAliveShips() - numberOfAllies;
+                        numberOfTargets = field.Grid[coord[0], coord[1] + 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                        numberOfThreats = field.Grid[coord[0], coord[1] + 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                        valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                        if (value < valueTemp)
+                        {
+                            newCoord[0] = coord[0];
+                            newCoord[1] = coord[1] + 1;
+                            value = valueTemp;
+                        }
+                        break;
+                    case 0b001100://+0;+1
+                        if (coord[0]+1<field.Size)
+                        {
+                            numberOfAllies = field.Grid[coord[0] + 1, coord[1] + 1].CountAlliedShips(Attacking);
+                            numberOfEnnemies = field.Grid[coord[0] + 1, coord[1] + 1].CountAliveShips() - numberOfAllies;
+                            numberOfTargets = field.Grid[coord[0] + 1, coord[1] + 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                            numberOfThreats = field.Grid[coord[0] + 1, coord[1] + 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                            valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                            if (value < valueTemp)
+                            {
+                                newCoord[0] = coord[0] + 1;
+                                newCoord[1] = coord[1] + 1;
+                                value = valueTemp;
+                            }
+                        }
+                        if (coord[0] - 1 >=0)
+                        {
+                            numberOfAllies = field.Grid[coord[0] - 1, coord[1] + 1].CountAlliedShips(Attacking);
+                            numberOfEnnemies = field.Grid[coord[0] - 1, coord[1] + 1].CountAliveShips() - numberOfAllies;
+                            numberOfTargets = field.Grid[coord[0] - 1, coord[1] + 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                            numberOfThreats = field.Grid[coord[0] - 1, coord[1] + 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                            valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                            if (value < valueTemp)
+                            {
+                                newCoord[0] = coord[0] - 1;
+                                newCoord[1] = coord[1] + 1;
+                                value = valueTemp;
+                            }
+                        }
+                        break;
+                    case 0b010001://+1;-1
+                        numberOfAllies = field.Grid[coord[0] + 1, coord[1]].CountAlliedShips(Attacking);
+                        numberOfEnnemies = field.Grid[coord[0] + 1, coord[1]].CountAliveShips() - numberOfAllies;
+                        numberOfTargets = field.Grid[coord[0] + 1, coord[1]].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                        numberOfThreats = field.Grid[coord[0] + 1, coord[1]].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                        valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                        if (value < valueTemp)
+                        {
+                            newCoord[0] = coord[0] + 1;
+                            newCoord[1] = coord[1];
+                            value = valueTemp;
+                        }
+                        numberOfAllies = field.Grid[coord[0], coord[1] - 1].CountAlliedShips(Attacking);
+                        numberOfEnnemies = field.Grid[coord[0], coord[1] - 1].CountAliveShips() - numberOfAllies;
+                        numberOfTargets = field.Grid[coord[0], coord[1] - 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                        numberOfThreats = field.Grid[coord[0], coord[1] - 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                        valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                        if (value < valueTemp)
+                        {
+                            newCoord[0] = coord[0];
+                            newCoord[1] = coord[1] - 1;
+                            value = valueTemp;
+                        }
+                        break;
+                    case 0b010010://-1;-1
+                        numberOfAllies = field.Grid[coord[0] - 1, coord[1]].CountAlliedShips(Attacking);
+                        numberOfEnnemies = field.Grid[coord[0] - 1, coord[1]].CountAliveShips() - numberOfAllies;
+                        numberOfTargets = field.Grid[coord[0] - 1, coord[1]].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                        numberOfThreats = field.Grid[coord[0] - 1, coord[1]].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                        valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                        if (value < valueTemp)
+                        {
+                            newCoord[0] = coord[0] - 1;
+                            newCoord[1] = coord[1];
+                            value = valueTemp;
+                        }
+                        numberOfAllies = field.Grid[coord[0], coord[1] - 1].CountAlliedShips(Attacking);
+                        numberOfEnnemies = field.Grid[coord[0], coord[1] - 1].CountAliveShips() - numberOfAllies;
+                        numberOfTargets = field.Grid[coord[0], coord[1] - 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                        numberOfThreats = field.Grid[coord[0], coord[1] - 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                        valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                        if (value < valueTemp)
+                        {
+                            newCoord[0] = coord[0];
+                            newCoord[1] = coord[1] - 1;
+                            value = valueTemp;
+                        }
+                        break;
+                    case 0b010100://+0;-1
+                        if (coord[0] + 1 < field.Size)
+                        {
+                            numberOfAllies = field.Grid[coord[0] + 1, coord[1] - 1].CountAlliedShips(Attacking);
+                            numberOfEnnemies = field.Grid[coord[0] + 1, coord[1] - 1].CountAliveShips() - numberOfAllies;
+                            numberOfTargets = field.Grid[coord[0] + 1, coord[1] - 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                            numberOfThreats = field.Grid[coord[0] + 1, coord[1] - 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                            valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                            if (value < valueTemp)
+                            {
+                                newCoord[0] = coord[0] + 1;
+                                newCoord[1] = coord[1] - 1;
+                                value = valueTemp;
+                            }
+                        }
+                        if (coord[0] - 1 >= 0)
+                        {
+                            numberOfAllies = field.Grid[coord[0] - 1, coord[1] - 1].CountAlliedShips(Attacking);
+                            numberOfEnnemies = field.Grid[coord[0] - 1, coord[1] - 1].CountAliveShips() - numberOfAllies;
+                            numberOfTargets = field.Grid[coord[0] - 1, coord[1] - 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                            numberOfThreats = field.Grid[coord[0] - 1, coord[1] - 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                            valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                            if (value < valueTemp)
+                            {
+                                newCoord[0] = coord[0] - 1;
+                                newCoord[1] = coord[1] - 1;
+                                value = valueTemp;
+                            }
+                        }
+                        break;
+                    case 0b100001://+1;+0
+                        if (coord[1] + 1 < field.Size)
+                        {
+                            numberOfAllies = field.Grid[coord[0] + 1, coord[1] + 1].CountAlliedShips(Attacking);
+                            numberOfEnnemies = field.Grid[coord[0] + 1, coord[1] + 1].CountAliveShips() - numberOfAllies;
+                            numberOfTargets = field.Grid[coord[0] + 1, coord[1] + 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                            numberOfThreats = field.Grid[coord[0] + 1, coord[1] + 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                            valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                            if (value < valueTemp)
+                            {
+                                newCoord[0] = coord[0] + 1;
+                                newCoord[1] = coord[1] + 1;
+                                value = valueTemp;
+                            }
+                        }
+                        if (coord[1] - 1 >= 0)
+                        {
+                            numberOfAllies = field.Grid[coord[0] + 1, coord[1] - 1].CountAlliedShips(Attacking);
+                            numberOfEnnemies = field.Grid[coord[0] + 1, coord[1] - 1].CountAliveShips() - numberOfAllies;
+                            numberOfTargets = field.Grid[coord[0] + 1, coord[1] - 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                            numberOfThreats = field.Grid[coord[0] + 1, coord[1] - 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                            valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                            if (value < valueTemp)
+                            {
+                                newCoord[0] = coord[0] + 1;
+                                newCoord[1] = coord[1] - 1;
+                                value = valueTemp;
+                            }
+                        }
+                        break;
+                    case 0b100010://-1;+0
+                        if (coord[1] + 1 < field.Size)
+                        {
+                            numberOfAllies = field.Grid[coord[0] - 1, coord[1] + 1].CountAlliedShips(Attacking);
+                            numberOfEnnemies = field.Grid[coord[0] - 1, coord[1] + 1].CountAliveShips() - numberOfAllies;
+                            numberOfTargets = field.Grid[coord[0] - 1, coord[1] + 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                            numberOfThreats = field.Grid[coord[0] - 1, coord[1] + 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                            valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                            if (value < valueTemp)
+                            {
+                                newCoord[0] = coord[0] - 1;
+                                newCoord[1] = coord[1] + 1;
+                                value = valueTemp;
+                            }
+                        }
+                        if (coord[1] - 1 >= 0)
+                        {
+                            numberOfAllies = field.Grid[coord[0] - 1, coord[1] - 1].CountAlliedShips(Attacking);
+                            numberOfEnnemies = field.Grid[coord[0] - 1, coord[1] - 1].CountAliveShips() - numberOfAllies;
+                            numberOfTargets = field.Grid[coord[0] - 1, coord[1] - 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                            numberOfThreats = field.Grid[coord[0] - 1, coord[1] - 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                            valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                            if (value < valueTemp)
+                            {
+                                newCoord[0] = coord[0] - 1;
+                                newCoord[1] = coord[1] - 1;
+                                value = valueTemp;
+                            }
+                        }
+                        break;
+                    case 0b100100://+0;+0
+                        if (coord[1] + 1 < field.Size) 
+                        {
+                            if(coord[0]-1>=0)
+                            {
+                                numberOfAllies = field.Grid[coord[0] - 1, coord[1] + 1].CountAlliedShips(Attacking);
+                                numberOfEnnemies = field.Grid[coord[0] - 1, coord[1] + 1].CountAliveShips() - numberOfAllies;
+                                numberOfTargets = field.Grid[coord[0] - 1, coord[1] + 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                                numberOfThreats = field.Grid[coord[0] - 1, coord[1] + 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                                valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                                if (value < valueTemp)
+                                {
+                                    newCoord[0] = coord[0] - 1;
+                                    newCoord[1] = coord[1] + 1;
+                                    value = valueTemp;
+                                }
+                            }
+                            if (coord[0] + 1 < field.Size)
+                            {
+                                numberOfAllies = field.Grid[coord[0] + 1, coord[1] + 1].CountAlliedShips(Attacking);
+                                numberOfEnnemies = field.Grid[coord[0] + 1, coord[1] + 1].CountAliveShips() - numberOfAllies;
+                                numberOfTargets = field.Grid[coord[0] + 1, coord[1] + 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                                numberOfThreats = field.Grid[coord[0] + 1, coord[1] + 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                                valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                                if (value < valueTemp)
+                                {
+                                    newCoord[0] = coord[0] + 1;
+                                    newCoord[1] = coord[1] + 1;
+                                    value = valueTemp;
+                                }
+                            }
+                            numberOfAllies = field.Grid[coord[0] - 1, coord[1]].CountAlliedShips(Attacking);
+                            numberOfEnnemies = field.Grid[coord[0] - 1, coord[1]].CountAliveShips() - numberOfAllies;
+                            numberOfTargets = field.Grid[coord[0] - 1, coord[1]].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                            numberOfThreats = field.Grid[coord[0] - 1, coord[1]].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                            valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                            if (value < valueTemp)
+                            {
+                                newCoord[0] = coord[0] - 1;
+                                newCoord[1] = coord[1];
+                                value = valueTemp;
+                            }
+
+                        }
+                        if (coord[1] - 1 >= 0)
+                        {
+                            if (coord[0] - 1 >= 0)
+                            {
+                                numberOfAllies = field.Grid[coord[0] - 1, coord[1] - 1].CountAlliedShips(Attacking);
+                                numberOfEnnemies = field.Grid[coord[0] - 1, coord[1] - 1].CountAliveShips() - numberOfAllies;
+                                numberOfTargets = field.Grid[coord[0] - 1, coord[1] - 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                                numberOfThreats = field.Grid[coord[0] - 1, coord[1] - 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                                valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                                if (value < valueTemp)
+                                {
+                                    newCoord[0] = coord[0] - 1;
+                                    newCoord[1] = coord[1] - 1;
+                                    value = valueTemp;
+                                }
+                            }
+                            if (coord[0] + 1 < field.Size)
+                            {
+                                numberOfAllies = field.Grid[coord[0] + 1, coord[1] - 1].CountAlliedShips(Attacking);
+                                numberOfEnnemies = field.Grid[coord[0] + 1, coord[1] - 1].CountAliveShips() - numberOfAllies;
+                                numberOfTargets = field.Grid[coord[0] + 1, coord[1] - 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                                numberOfThreats = field.Grid[coord[0] + 1, coord[1] - 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                                valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                                if (value < valueTemp)
+                                {
+                                    newCoord[0] = coord[0] + 1;
+                                    newCoord[1] = coord[1] - 1;
+                                    value = valueTemp;
+                                }
+                            }
+                            numberOfAllies = field.Grid[coord[0], coord[1] - 1].CountAlliedShips(Attacking);
+                            numberOfEnnemies = field.Grid[coord[0], coord[1] - 1].CountAliveShips() - numberOfAllies;
+                            numberOfTargets = field.Grid[coord[0], coord[1] - 1].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                            numberOfThreats = field.Grid[coord[0], coord[1] - 1].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                            valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                            if (value < valueTemp)
+                            {
+                                newCoord[0] = coord[0];
+                                newCoord[1] = coord[1] - 1;
+                                value = valueTemp;
+                            }
+                        }
+                        if (coord[0] + 1 < field.Size)
+                        {
+                            numberOfAllies = field.Grid[coord[0] + 1, coord[1]].CountAlliedShips(Attacking);
+                            numberOfEnnemies = field.Grid[coord[0] + 1, coord[1]].CountAliveShips() - numberOfAllies;
+                            numberOfTargets = field.Grid[coord[0] + 1, coord[1]].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                            numberOfThreats = field.Grid[coord[0] + 1, coord[1]].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                            valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                            if (value < valueTemp)
+                            {
+                                newCoord[0] = coord[0] + 1;
+                                newCoord[1] = coord[1] ;
+                                value = valueTemp;
+                            }
+                        }
+                        if (coord[0] -1 >= 0)
+                        {
+                            numberOfAllies = field.Grid[coord[0] -1, coord[1]].CountAlliedShips(Attacking);
+                            numberOfEnnemies = field.Grid[coord[0] - 1, coord[1]].CountAliveShips() - numberOfAllies;
+                            numberOfTargets = field.Grid[coord[0] - 1, coord[1]].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                            numberOfThreats = field.Grid[coord[0] - 1, coord[1]].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                            valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                            if (value < valueTemp)
+                            {
+                                newCoord[0] = coord[0] - 1;
+                                newCoord[1] = coord[1];
+                                value = valueTemp;
+                            }
+                        }
+                        numberOfAllies = field.Grid[coord[0], coord[1]].CountAlliedShips(Attacking);
+                        numberOfEnnemies = field.Grid[coord[0], coord[1]].CountAliveShips() - numberOfAllies;
+                        numberOfTargets = field.Grid[coord[0], coord[1]].CountShipsOfType(SubType.FavoriteTargets[0], !attacking);
+                        numberOfThreats = field.Grid[coord[0], coord[1]].CountShipsOfType(SubType.WorstEnnemies[0], !Attacking);
+                        valueTemp = numberOfTargets - numberOfThreats * 2 - numberOfEnnemies * 2;
+                        if (value < valueTemp)
+                        {
+                            newCoord[0] = coord[0] - 1;
+                            newCoord[1] = coord[1];
+                            value = valueTemp;
+                        }
+                        break;
+                }
+                coord = newCoord;
+
             }
             else
             {
@@ -512,10 +916,12 @@ namespace Simulator
                         j = field.Size - 1;
                     }
                 }
+                coord[0] = i;
+                coord[1] = j;
             }
-            
+
             MovementLeft--;
-            return new int[2] { i, j };
+            return coord;
         }
     }
 }
