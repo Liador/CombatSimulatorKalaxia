@@ -5,7 +5,7 @@ namespace Simulator
     class Simulation
     {
         public static int numberOfBattles = 10;
-        public static bool testMode = false;
+        public static bool testMode = true;
         public static bool fightOnBattleField = true;
         public static int armySize = 10;
         public static int battleFieldSize=5;
@@ -61,12 +61,12 @@ namespace Simulator
 
                 army1 = new Army()
                 {
-                    Name = "Blue"
+                    Name = "Green"
                 };
 
                 army2 = new Army()
                 {
-                    Name = "Green"
+                    Name = "Blue"
                 };
 
 
@@ -101,12 +101,12 @@ namespace Simulator
 
                 army1 = new Army()
                 {
-                    Name = "Blue"
+                    Name = "Green"
                 };
 
                 army2 = new Army()
                 {
-                    Name = "Green"
+                    Name = "Blue"
                 };
 
 
